@@ -34,6 +34,26 @@ function ddown { docker-compose down $args }
 
 # Custom Functions
 function Show-MhdHelp {
+    $helpAscii = @"
+ __  __ _   _ ____    _   _      _       
+|  \/  | | | |  _ \  | | | | ___| |_ __  
+| |\/| | |_| | | | | | |_| |/ _ \ | '_ \ 
+| |  | |  _  | |_| | |  _  |  __/ | |_) |
+|_|  |_|_| |_|____/  |_| |_|\___|_| .__/ 
+                                  |_|    
+"@mhd
+
+    function Write-ColorfulArt {
+        param([string]$Text)
+        $colors = @("Red","Yellow","Green","Cyan","Blue","Magenta")
+        $lines = $Text -split "`n"
+        for ($i = 0; $i -lt $lines.Length; $i++) {
+            Write-Host $lines[$i] -ForegroundColor $colors[$i % $colors.Length]
+        }
+    }
+
+    Write-ColorfulArt $helpAscii
+
     $commands = @{
         "Git" = @{
             "gs" = "git status"; "ga" = "git add"; "gc" = "git commit"

@@ -1,192 +1,118 @@
+# MyHomeDesktop: PowerShell Development Environment
 
-# Development Setup with Docker and PowerShell
-
-This repository contains configuration files and Docker setup for managing your development environment across multiple Windows devices.
+This repository contains configuration files and scripts for managing your development environment across multiple Windows devices using PowerShell and Docker.
 
 ## Directory Structure
-
-Here's a sample structure of the repository:
-
 ```
-.
-├── aliases.ps1
-├── Dockerfile                       # Dockerfile for your Python setup
-├── requirements.txt                 # Python dependencies
-├── docker-compose.yml               # Docker Compose file for multiple services
-├── Microsoft.PowerShell_profile.ps1
-├── Procfile
+MyHomeDesktop/
+├── ps-scripts/
+│ ├── aliases.ps1
+│ ├── console-startup.ps1
+│ ├── first-run.ps1
+│ ├── functions.ps1
+│ ├── procfile-template.ps1
+│ ├── setup.ps1
+│ ├── setup-omp.ps1
+│ └── setup-procfile.ps1
+├── themes/
+│ └── oh-my-posh/
+│ ├── 1_shell.omp.json
+│ ├── amro.omp.json
+│ └── avit.omp.json
 └── README.md
 ```
+## PowerShell Scripts (ps-scripts/)
 
-## 1. PowerShell Profile (Microsoft.PowerShell_profile.ps1)
+### aliases.ps1
+Contains custom aliases and functions for Git, navigation, system utilities, Python virtual environments, Docker shortcuts, and more.
 
-This file will store configurations that are automatically loaded when you open PowerShell. You can include your custom aliases, commands, and any environment settings.
+Key features:
+- Git aliases (gs, ga, gc, gp, etc.)
+- Navigation shortcuts (docs, desktop, mhd)
+- System utilities (cls, lt, ls, rld)
+- Python virtual environment helpers
+- Docker shortcuts
+- Custom functions (Get-SystemInfo, Get-ConnectionInfo, etc.)
 
-### Sample content for your PowerShell profile:
+### console-startup.ps1
+Sets up the initial PowerShell environment, including:
+- Setting the initial directory
+- Loading custom aliases
+- Loading Oh My Posh theme
 
-```powershell
-# Custom Git aliases
-Set-Alias -Name gti -Value git
-Set-Alias -Name gs -Value git status
-Set-Alias -Name ga -Value git add
-Set-Alias -Name gc -Value git commit
-Set-Alias -Name gp -Value git push
+### first-run.ps1
+Provides a colorful welcome message and displays system information when you start PowerShell.
 
-# Oh My Posh initialization with Pure theme
-oh-my-posh init pwsh --config "C:\Users\dylan\oh-my-posh-themes\pure.omp.json" | Invoke-Expression
-```
+### functions.ps1
+Contains the `Show-MhdHelp` function, which displays all available custom commands.
 
-## 2. Docker Setup
+### procfile-template.ps1
+Template for the PowerShell profile, which loads various scripts and sets up Oh My Posh.
 
-### Dockerfile
-This **Dockerfile** sets up a Python environment inside a container.
+### setup.ps1
+Installs necessary tools and dependencies using winget:
+- Git
+- Node.js
+- Python
 
-```Dockerfile
-# Use the official Python image from Docker Hub
-FROM python:3.10-slim
+### setup-omp.ps1
+Sets up Oh My Posh with a specified theme.
 
-# Set the working directory in the container
-WORKDIR /usr/src/app
+### setup-procfile.ps1
+Updates the PowerShell profile with the content from the template file.
 
-# Copy the requirements.txt file (if you have one)
-COPY requirements.txt ./
+## Themes (themes/oh-my-posh/)
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+Contains Oh My Posh theme files:
+- 1_shell.omp.json
+- amro.omp.json
+- avit.omp.json
 
-# Copy the rest of your application code
-COPY . .
+## Usage
 
-# Set environment variables (optional)
-ENV PYTHONUNBUFFERED=1
+1. Clone this repository to your local machine.
 
-# Run a command (this can be a Python script or any entry point)
-CMD ["python", "./your_script.py"]
-```
-
-### requirements.txt
-List all the Python dependencies in this file:
-```
-flask
-requests
-gunicorn
-```
-
-### Building and Running the Docker Container
-
-1. **Build the Docker Image**:
-   ```bash
-   docker build -t my-python-app .
+2. Run the setup script to install necessary tools:
+   ```powershell
+   .\ps-scripts\setup.ps1
    ```
 
-2. **Run the Container**:
-   ```bash
-   docker run -it --rm my-python-app
+3. Set up your PowerShell profile:
+   ```powershell
+   .\ps-scripts\setup-procfile.ps1
    ```
 
-### 3. Docker Compose (Optional)
-You can also use **Docker Compose** to handle multiple services like Python, PostgreSQL, and Redis.
-
-Example `docker-compose.yml` file:
-
-```yaml
-version: '3'
-
-services:
-  app:
-    build: .
-    container_name: python_app
-    volumes:
-      - .:/usr/src/app
-    ports:
-      - "5000:5000"
-    depends_on:
-      - db
-    environment:
-      - PYTHONUNBUFFERED=1
-    command: python your_script.py
-
-  db:
-    image: postgres:latest
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: mydb
-    ports:
-      - "5432:5432"
-
-  redis:
-    image: redis:alpine
-    ports:
-      - "6379:6379"
-```
-
-To start the services using Docker Compose:
-```bash
-docker-compose up
-```
-
-## 4. VS Code Settings
-
-To keep your VS Code consistent across devices, you can include:
-- `vscode/settings.json`: VS Code settings file.
-- `vscode/extensions.txt`: List of extensions installed.
-
-Generate the list of installed extensions using:
-```bash
-code --list-extensions > extensions.txt
-```
-
-## 5. Setting up Environment Variables (env-setup.ps1)
-Use this file to configure environment variables like Python or Node.js paths:
-
-```powershell
-# Set up Python virtual environment path
-$env:PYTHONPATH = "C:\path\to\your\python\env"
-
-# Set up Node.js project path
-$env:NODE_PATH = "C:\path\to\your\node\project"
-```
-
-## 6. Automation Scripts (setup.ps1)
-A setup script to install dependencies or configure your environment when cloning the repository:
-
-```powershell
-# Install packages, dependencies, or tools
-winget install JanDeDobbeleer.OhMyPosh
-winget install Git.Git
-
-# Set up environment variables, tools, etc.
-```
-
-## 7. README.md
-
-Make sure to document your setup so that it’s easy to set up across devices or share with others.
-
-```
-## Setup
-
-1. Build the Docker container:
-   ```bash
-   docker build -t my-python-app .
+4. Restart your PowerShell session or reload the profile:
+   ```powershell
+   . $PROFILE
    ```
 
-2. Run the container:
-   ```bash
-   docker run -it --rm my-python-app
+5. To see all available custom commands, run:
+   ```powershell
+   mhd-help
    ```
 
-Or with Docker Compose:
+## Custom Commands
 
-1. Start the entire stack:
-   ```bash
-   docker-compose up
-   ```
+- `sysinfo`: Display comprehensive system information
+- `connections`: Display Wi-Fi and Bluetooth connection information
+- `speedtest`: Run an internet speed test
+- `rst-procfile`: Reset PowerShell profile
+- `select-theme`: Select and preview Oh My Posh themes
+- `set-default-shell`: Set PowerShell to use default shell (no Oh My Posh)
 
-2. Stop it:
-   ```bash
-   docker-compose down
-   ```
-```
+For a full list of commands, use the `mhd-help` command.
 
-With this setup, you can easily manage your development environment across multiple devices using Docker and PowerShell. Happy coding!
+## Customization
+
+- Modify `ps-scripts/aliases.ps1` to add your own custom aliases and functions.
+- Edit theme files in `themes/oh-my-posh/` to customize your Oh My Posh theme.
+- Update `ps-scripts/procfile-template.ps1` to change the default PowerShell profile setup.
+
+## Contributing
+
+Feel free to fork this repository and submit pull requests with your improvements or customizations.
+
+## License
+
+[MIT License](LICENSE)
