@@ -29,8 +29,17 @@ $asciiArt = @"
 Clear-Host
 Write-ColorfulArt $asciiArt
 
+# Load settings
+$settingsFile = "$env:USERPROFILE\MyHomeDesktop\settings.json"
+if (Test-Path $settingsFile) {
+    $settings = Get-Content $settingsFile | ConvertFrom-Json
+    $welcomeName = $settings.Startup.WelcomeName
+} else {
+    $welcomeName = "User" # Default name if settings file doesn't exist
+}
+
 Write-Host "Welcome Back " -ForegroundColor White -NoNewline
-Write-ColorfulName "Dylan!"
+Write-ColorfulName $welcomeName
 
 # System Information with colors
 $computerInfo = Get-ComputerInfo

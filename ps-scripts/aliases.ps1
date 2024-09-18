@@ -41,7 +41,7 @@ function Show-MhdHelp {
 | |  | |  _  | |_| | |  _  |  __/ | |_) |
 |_|  |_|_| |_|____/  |_| |_|\___|_| .__/ 
                                   |_|    
-"@mhd
+"@
 
     function Write-ColorfulArt {
         param([string]$Text)

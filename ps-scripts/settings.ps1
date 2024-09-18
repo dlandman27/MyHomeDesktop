@@ -105,4 +105,28 @@ function mhd-settings {
     Write-Host "Fast Startup:" -NoNewline -ForegroundColor Cyan; Write-Host " $($Performance.FastStartup)" -ForegroundColor White
 
     Write-Host "`nSettings loaded. Use Save-Settings to save any changes." -ForegroundColor Green
+
+    function Update-WelcomeName {
+        $newName = Read-Host "Enter new welcome name"
+        $Startup.WelcomeName = $newName
+        Write-Host "Welcome name updated to: $newName" -ForegroundColor Green
+    }
+
+    function Show-Menu {
+        Write-Host "`nMHD Settings Menu:" -ForegroundColor Yellow
+        Write-Host "1. Update Welcome Name" -ForegroundColor Cyan
+        Write-Host "2. Save Settings" -ForegroundColor Cyan
+        Write-Host "3. Exit" -ForegroundColor Cyan
+        
+        $choice = Read-Host "`nEnter your choice"
+        switch ($choice) {
+            "1" { Update-WelcomeName; Show-Menu }
+            "2" { Save-Settings; Show-Menu }
+            "3" { return }
+            default { Write-Host "Invalid choice. Try again." -ForegroundColor Red; Show-Menu }
+        }
+    }
+
+    # Show the menu
+    Show-Menu
 }
