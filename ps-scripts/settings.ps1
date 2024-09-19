@@ -6,12 +6,16 @@ function Select-OhMyPoshTheme {
     $settingsContent = Get-Content $settingsPath -Raw | ConvertFrom-Json
     $activeThemeName = $settingsContent.theme.'default-theme'
 
+    Write-Host "Hello $activeThemeName"
+
     $themeOptions = @()
     for ($i = 0; $i -lt $themes.Count; $i++) {
         $themeName = $themes[$i] -replace '\.omp\.json$', ''
         $themeDisplay = $themeName
         if ($themeName -eq $activeThemeName) {
-            $themeDisplay += " (active)"
+            $greenColor = [char]0x1b + "[32m"
+            $resetColor = [char]0x1b + "[0m"
+            $themeDisplay += " ($greenColor" + "active" + "$resetColor)"
         }
         $themeOptions += $themeDisplay
     }
@@ -102,10 +106,11 @@ function mhd-settings {
         )
 
         # Clear-Host
+        Clear-Host
         Write-ColorfulArt $settingsAscii
-        Write-Host ("`n" + "=" * $MaxWidth)
+        Write-Host ("`n" + "═" * $MaxWidth) -ForegroundColor Magenta
         Write-Host $Title.PadRight($MaxWidth) -ForegroundColor Cyan
-        Write-Host ("=" * $MaxWidth)
+        Write-Host ("═" * $MaxWidth) -ForegroundColor Magenta
 
         for ($i = 0; $i -lt $MenuItems.Count; $i++) {
             $menuItem = $MenuItems[$i].PadRight($MaxWidth - 6)
@@ -113,12 +118,12 @@ function mhd-settings {
         }
 
         if ($IsMainMenu) {
-            Write-Host ("[{0,2}] {1}" -f ($MenuItems.Count + 1), "Exit".PadRight($MaxWidth - 6))
+            Write-Host ("[{0,2}] {1}" -f ($MenuItems.Count + 1), "Exit".PadRight($MaxWidth - 6)) -ForegroundColor DarkYellow
         } else {
-            Write-Host ("[{0,2}] {1}" -f ($MenuItems.Count + 1), "Back".PadRight($MaxWidth - 6))
+            Write-Host ("[{0,2}] {1}" -f ($MenuItems.Count + 1), "Back".PadRight($MaxWidth - 6)) -ForegroundColor DarkYellow
         }
 
-        Write-Host ("=" * $MaxWidth)
+        Write-Host ("═" * $MaxWidth) -ForegroundColor Magenta
 
         do {
             $choice = Read-Host "`nEnter your choice"
@@ -169,14 +174,19 @@ function mhd-settings {
                 $settingsJson.$Category.$Setting = $newValue
                 $settingsJson | ConvertTo-Json -Depth 10 | Set-Content $settingsJsonPath
                 Write-Host "settings.json updated successfully." -ForegroundColor Green
-        
-                # If the setting is the default theme, update setup-omp.ps1
+
+                # Update settings.json
+                $settingsJson.$Category.$Setting = $newValue
+                $settingsJson | ConvertTo-Json -Depth 10 | Set-Content $settingsJsonPath
+                Write-Host "settings.json updated successfully." -ForegroundColor Green
+
+                # If the setting is for the active theme, update Oh My Posh
                 if ($Category -eq "theme" -and $Setting -eq "default-theme") {
-                    $setupOmpPath = "$env:USERPROFILE\MyHomeDesktop\ps-scripts\setup-omp.ps1"
-                    $setupOmpContent = Get-Content $setupOmpPath -Raw
-                    $updatedSetupOmpContent = $setupOmpContent -replace '(?<=\$ThemeName\s*=\s*")[^"]*', $newValue
-                    Set-Content $setupOmpPath $updatedSetupOmpContent
-                    Write-Host "setup-omp.ps1 updated with new default theme." -ForegroundColor Green
+                    try {
+                        oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\$newValue.omp.json" | Invoke-Expression
+                    } catch {
+                        Write-Host "Failed to update Oh My Posh theme. Please check if the theme file exists." -ForegroundColor Red
+                    }
                 }
             } else {
                 Write-Host "Change not saved." -ForegroundColor Yellow
@@ -196,6 +206,9 @@ function mhd-settings {
         
         # Exit Handling
         if ($mainChoice -eq ($mainCategories.Count + 1)) {
+            Write-Host "Bye"
+            # Reset the PowerShell profile            
+            Write-Host "Please restart PowerShell for changes to take effect." -ForegroundColor Cyan
             break  # Exit the script
         }
 
@@ -214,12 +227,10 @@ function mhd-settings {
             $currentValueConfig = $settingsConfig.$selectedCategory.$selectedSubItem
             $currentValue = $settingsJson.$selectedCategory.$selectedSubItem
 
-            Write-Host "selected category $selectedSubItem"
-            Write-Host "current val $currentValueConfig"
-            Write-Host "NOT CONFIG $currentValue"
-
-
             Update-SettingValue -Category $selectedCategory -Setting $selectedSubItem -ConfigValue $currentValueConfig -ActualValue $currentValue
         }
     }
 }
+
+Write-Host "To view and edit settings, run:" -NoNewline -ForegroundColor Cyan
+Write-Host " mhd-settings" -ForegroundColor Green

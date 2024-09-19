@@ -67,4 +67,5 @@ if ($showSystemInfo) {
 
     Write-Host "Running Processes:" -NoNewline -ForegroundColor Cyan; Write-Host " $((Get-Process).Count)" -ForegroundColor White
     Write-Host "Memory Usage:" -NoNewline -ForegroundColor Cyan; Write-Host " $([math]::Round($processes.Sum / 1GB, 2)) GB" -ForegroundColor White
+    Write-Host "══════════════════" -ForegroundColor Magenta
 }

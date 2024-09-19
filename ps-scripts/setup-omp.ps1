@@ -1,8 +1,14 @@
-# Setup Oh My Posh with a specified theme
+# Setup Oh My Posh with the theme specified in settings.json
 
-param(
-    [string]$ThemeName = "pure" # Default theme is "pure"
-)
+# Load settings from settings.json
+$settingsPath = Join-Path $env:USERPROFILE "MyHomeDesktop\settings.json"
+if (Test-Path $settingsPath) {
+    $settings = Get-Content $settingsPath | ConvertFrom-Json
+    $ThemeName = $settings.theme.'default-theme'
+} else {
+    Write-Host "Error: settings.json not found. Using default theme." -ForegroundColor Yellow
+    $ThemeName = "avit" # Default theme if settings.json is not found
+}
 
 $themePath = Join-Path $env:USERPROFILE "MyHomeDesktop\themes\oh-my-posh"
 $themeFile = "$ThemeName.omp.json"
@@ -26,6 +32,10 @@ $configLine = "oh-my-posh init pwsh --config $fullThemePath"
 
 # Execute the Oh My Posh initialization command
 Invoke-Expression ($configLine + " | Invoke-Expression")
+
+
+
+
 
 
 
