@@ -15,8 +15,13 @@ if (-not (Test-Path $fullThemePath)) {
     return
 }
 
+# Check if Oh My Posh is installed
+if (-not (Get-Command "oh-my-posh" -ErrorAction SilentlyContinue)) {
+    Write-Host "Error: Oh My Posh is not installed. Please install it before running this script." -ForegroundColor Red
+    return
+}
+
 # Prepare the Oh My Posh initialization command
-# Write-Host "Initializing Oh My Posh with $ThemeName theme..." -ForegroundColor Cyan
 $configLine = "oh-my-posh init pwsh --config $fullThemePath"
 
 # Execute the Oh My Posh initialization command
