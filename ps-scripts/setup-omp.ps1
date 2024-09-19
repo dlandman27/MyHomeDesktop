@@ -21,3 +21,22 @@ $configLine = "oh-my-posh init pwsh --config $fullThemePath"
 
 # Execute the Oh My Posh initialization command
 Invoke-Expression ($configLine + " | Invoke-Expression")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

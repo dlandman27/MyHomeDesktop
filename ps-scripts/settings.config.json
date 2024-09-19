@@ -1,0 +1,26 @@
+{
+  "bootup-display": {
+    "welcome-name": {
+      "type": "string",
+      "initial-value": "Dylan",
+      "display-name": "Welcome Name on Boot"
+    },
+    "show-system-info": {
+      "type": "boolean",
+      "initial-value": false,
+      "display-name": "Show System Information on Boot"
+    },
+    "show-initial-banner": {
+      "type": "boolean",
+      "initial-value": true,
+      "display-name": "Show Banner on Boot"
+    }
+  },
+  "theme": {
+    "default-theme": {
+      "type": "theme",
+      "initial-value": "negligible",
+      "display-name": "Default Theme"
+    }
+  }
+}
