@@ -17,7 +17,6 @@ function mhd { Set-Location $env:USERPROFILE\MyHomeDesktop }
 Set-Alias -Name cls -Value Clear-Host
 Set-Alias -Name lt -Value Get-Location
 Set-Alias -Name ls -Value Get-ChildItem
-function rld { . $PROFILE }
 Set-Alias -Name notepad -Value "notepad"
 
 # Python Virtual Environment
@@ -67,7 +66,6 @@ function Show-MhdHelp {
         }
         "System" = @{
             "cls" = "Clear screen"; "lt" = "Show location"; "ls" = "List files"
-            "rld" = "Reload profile"; "notepad" = "Open Notepad"
             "sysinfo" = "Display comprehensive system information"
             "connections" = "Display Wi-Fi and Bluetooth connection information"
             "speedtest" = "Run an internet speed test"
@@ -82,9 +80,7 @@ function Show-MhdHelp {
         }
         "Custom" = @{
             "mhd-help" = "Show this help message"
-            "rst-procfile" = "Reset PowerShell profile"
-            "select-theme" = "Select and preview Oh My Posh themes"
-            "set-default-shell" = "Set PowerShell to use default shell (no Oh My Posh)"
+            "mhd-restart" = "Reset PowerShell profile"
         }
     }
 
@@ -108,54 +104,6 @@ function Reset-Profile {
         . $PROFILE
     } else {
         Write-Host "Profile reset cancelled." -ForegroundColor Cyan
-    }
-}
-
-function Select-OhMyPoshTheme {
-    $themesPath = "$env:USERPROFILE\MyHomeDesktop\themes\oh-my-posh"
-    $themes = Get-ChildItem -Path $themesPath -Filter "*.omp.json" | Select-Object -ExpandProperty Name
-    $originalTheme = $env:POSH_THEME
-    $activeThemeName = (Get-Content "$env:USERPROFILE\MyHomeDesktop\ps-scripts\procfile-template.ps1" | 
-                        Select-String -Pattern '(?<=setup-omp\.ps1" -ThemeName ")[^"]*').Matches.Value
-
-    Write-Host "View themes at (https://ohmyposh.dev/docs/themes)" -ForegroundColor Yellow
-    Write-Host "Available Oh My Posh themes:" -ForegroundColor Cyan
-    Write-Host "Current active theme: $activeThemeName" -ForegroundColor Green
-    for ($i = 0; $i -lt $themes.Count; $i++) {
-        $themeDisplay = $themes[$i]
-        if ($themes[$i] -eq "$activeThemeName.omp.json") {
-            $themeDisplay += " (active)"
-        }
-        Write-Host "$($i + 1). $themeDisplay" -ForegroundColor Yellow
-    }
-
-    while ($true) {
-        $selection = Read-Host "`nEnter the number of the theme you want to preview (or 'q' to quit)"
-        if ($selection -eq 'q') {
-            $env:POSH_THEME = $originalTheme
-            return
-        }
-
-        $selectedTheme = $themes[$selection - 1]
-
-        if ($selectedTheme) {
-            $themePath = Join-Path $themesPath $selectedTheme
-            $previewCommand = "oh-my-posh init pwsh --config `"$themePath`""
-            Invoke-Expression ($previewCommand + " | Invoke-Expression")
-            
-            $themeName = $selectedTheme -replace '\.omp\.json$', ''
-            $profileTemplatePath = "$env:USERPROFILE\MyHomeDesktop\ps-scripts\procfile-template.ps1"
-            
-            (Get-Content $profileTemplatePath) | 
-            ForEach-Object { $_ -replace '(?<=setup-omp\.ps1" -ThemeName ")[^"]*', $themeName } |
-            Set-Content $profileTemplatePath
-
-            & "$env:USERPROFILE\MyHomeDesktop\ps-scripts\setup-procfile.ps1"
-            Write-Host "Theme updated to $themeName. Please restart your PowerShell session for changes to take effect." -ForegroundColor Green
-            return
-        } else {
-            Write-Host "Invalid selection. Please try again." -ForegroundColor Red
-        }
     }
 }
 
@@ -187,7 +135,7 @@ function Get-SystemInfo {
     # Memory Information
     $memory = Get-CimInstance Win32_PhysicalMemory | Measure-Object -Property Capacity -Sum
     $totalMemoryGB = [math]::Round($memory.Sum / 1GB, 2)
-    Write-Host "`nMemory" -ForegroundColor $headerColor
+    Write-Host "`nMemory (RAM)" -ForegroundColor $headerColor
     Write-CategoryInfo "  Total" "$totalMemoryGB GB"
 
     # Disk Information
@@ -219,23 +167,6 @@ function Get-SystemInfo {
         Write-CategoryInfo "  Status" $batteryStatus
         Write-CategoryInfo "  Charge" "$($battery.EstimatedChargeRemaining)%"
     }
-}
-
-function Set-DefaultShell {
-    $profileTemplatePath = "$env:USERPROFILE\MyHomeDesktop\ps-scripts\procfile-template.ps1"
-    
-    (Get-Content $profileTemplatePath) | 
-    ForEach-Object { 
-        if ($_ -match '& "\$env:USERPROFILE\\MyHomeDesktop\\ps-scripts\\setup-omp\.ps1"') {
-            "# $_"
-        } else {
-            $_
-        }
-    } |
-    Set-Content $profileTemplatePath
-
-    & "$env:USERPROFILE\MyHomeDesktop\ps-scripts\setup-procfile.ps1"
-    Write-Host "PowerShell profile updated to use default shell. Please restart your PowerShell session for changes to take effect." -ForegroundColor Green
 }
 
 function Get-ConnectionInfo {
@@ -299,10 +230,8 @@ function Get-ConnectionInfo {
 
 # Create aliases for the custom functions
 Set-Alias -Name mhd-help -Value Show-MhdHelp
-Set-Alias -Name rst-procfile -Value Reset-Profile
-Set-Alias -Name select-theme -Value Select-OhMyPoshTheme
+Set-Alias -Name mhd-restart -Value Reset-Profile
 Set-Alias -Name sysinfo -Value Get-SystemInfo
-Set-Alias -Name set-default-shell -Value Set-DefaultShell
 Set-Alias -Name connections -Value Get-ConnectionInfo
 Set-Alias -Name speedtest -Value Test-InternetSpeed
 

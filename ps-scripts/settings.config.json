@@ -22,5 +22,17 @@
       "initial-value": "negligible",
       "display-name": "Default Theme"
     }
+  },
+  "custom-aliases": {
+    "description": "Custom aliases for frequently used commands",
+    "aliases": {
+      "type": "object",
+      "initial-value": {},
+      "display-name": "Custom Aliases",
+      "item-type": {
+        "type": "string",
+        "display-name": "Command"
+      }
+    }
   }
 }
