@@ -7,7 +7,7 @@
     },
     "show-system-info": {
       "type": "boolean",
-      "initial-value": false,
+      "initial-value": true,
       "display-name": "Show System Information on Boot"
     },
     "show-initial-banner": {

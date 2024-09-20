@@ -106,7 +106,6 @@ function Reset-Profile {
         & "$env:USERPROFILE\MyHomeDesktop\ps-scripts\setup-procfile.ps1"
         Write-Host "Profile reset complete."
         . $PROFILE
-        Write-Host "PowerShell profile has been reloaded. Please restart your terminal" -ForegroundColor Green
     } else {
         Write-Host "Profile reset cancelled." -ForegroundColor Cyan
     }

@@ -20,6 +20,32 @@ function Setup-Environment {
     Write-Host "Verifying Oh My Posh installation..." -ForegroundColor Cyan
     oh-my-posh --version
 
+    # Add the new function to reset settings
+    function Reset-Settings {
+        $configPath = "ps-scripts/settings.config.json"
+        $settingsPath = "settings.json"
+
+        if (Test-Path $configPath) {
+            $config = Get-Content $configPath | ConvertFrom-Json
+            $settings = @{}
+
+            foreach ($category in $config.PSObject.Properties) {
+                $settings[$category.Name] = @{}
+                foreach ($setting in $category.Value.PSObject.Properties) {
+                    $settings[$category.Name][$setting.Name] = $setting.Value."initial-value"
+                }
+            }
+
+            $settings | ConvertTo-Json -Depth 4 | Set-Content $settingsPath
+            Write-Host "Settings have been reset to their initial values." -ForegroundColor Green
+        } else {
+            Write-Host "Error: settings.config.json not found." -ForegroundColor Red
+        }
+    }
+
+    # Call the Reset-Settings function
+    Reset-Settings
+
     Write-Host "Setup complete!" -ForegroundColor Green
 }
 
