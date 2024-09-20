@@ -32,6 +32,7 @@ MyHomeDesktop/
 
 2. **settings.config.json**:  
    Configuration file containing default settings for the environment.
+   Also includes the different options that can be edited and their types.
 
 3. **settings.ps1**:  
    Manages the settings for the MyHomeDesktop environment, including theme selection and configuration.
@@ -53,7 +54,7 @@ MyHomeDesktop/
 
 ## Themes (themes/oh-my-posh/):
 
-Contains Oh My Posh theme files: `1_shell.omp.json`, `amro.omp.json`, `avit.omp.json`, and `negligible.omp.json`.
+Contains Oh My Posh theme files: `1_shell.omp.json`, `amro.omp.json`, `avit.omp.json`, and more
 
 ## Usage:
 
@@ -79,6 +80,12 @@ Contains Oh My Posh theme files: `1_shell.omp.json`, `amro.omp.json`, `avit.omp.
     mhd-help
     ```
 
+4. To see and update settings, run:
+
+    ```powershell
+    mhd-settings
+    ```
+
 ## Custom Commands:
 
 - **sysinfo**: Display comprehensive system information
@@ -100,7 +107,7 @@ For a full list of commands, use the `mhd-help` command.
 
 ## Contributing:
 
-Feel free to fork this repository and submit pull requests with your improvements or customizations.
+Feel free to fork this repository and submit pull requests with your improvements or customizations!
 
 ## License:
 
