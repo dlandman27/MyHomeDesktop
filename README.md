@@ -62,10 +62,7 @@ Contains Oh My Posh theme files: `1_shell.omp.json`, `amro.omp.json`, `avit.omp.
 2. Set up your PowerShell profile to load the scripts:
 
     ```powershell
-    . "$env:USERPROFILE\MyHomeDesktop\ps-scripts\aliases.ps1"
-    . "$env:USERPROFILE\MyHomeDesktop\ps-scripts\settings.ps1"
-    . "$env:USERPROFILE\MyHomeDesktop\ps-scripts\setup-omp.ps1"
-    . "$env:USERPROFILE\MyHomeDesktop\ps-scripts\startup-display.ps1"
+      .\setup_script.ps1
     ```
 
 3. Restart your PowerShell session or reload the profile:
