@@ -1,3 +1,4 @@
+<img width="817" alt="image" src="https://github.com/user-attachments/assets/c1ee1051-95b0-4166-879a-5ee04909e769">
 
 # MyHomeDesktop: PowerShell Development Environment
 
